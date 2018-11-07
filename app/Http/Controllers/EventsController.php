@@ -8,25 +8,32 @@ use Calendar;
 
 class EventsController extends Controller
 {
+    public function __construct(){
+        $this->middleware('auth');
+    }
+
     public function index(){
         $events = [];
-        //$data = Event::all();
-        for($i = 0; $i < 5; $i++){
-            $events[] = Calendar::event(
-                'Holiday',
-                true,
-                new \DateTime('2018-11-02'),
-                new \DateTime('2018-11-30'),
-                null,
-                // Add color and link on event
-                [
-                    'color' => '#ff0000'
-                ]
-            );
-        }
+        $events[] = Calendar::event(
+            'Dia del amor',
+            true,
+            new \DateTime('2018-11-02'),
+            new \DateTime('2018-11-12'.' +1 day'),
+            null,
+            // Add color and link on event
+            [
+                'color' => '#ff0000',
+                'url' => 'pass here url and any route',
+            ]
+        );
+        $calendar = Calendar::addEvents($events)->setOptions(['views' => [
+            'month' => [
+                'titleFormat' => 'MMMM yyyy'
+            ]
+        ]]);
 
-        $calendar = Calendar::addEvents($events);
-        return view('home', compact('calendar'));
+        return view('home')
+            ->with('calendar', $calendar);
     }
 
     public function insertEvent(Request $request){
